@@ -1,18 +1,18 @@
 (deftemplate book
-    (slot title)
-    (slot author)
-    (slot genre)
-    (slot time_period)
-    (slot country)
+    (slot title )
+    (slot author )
+    (slot genre (type SYMBOL))
+    (slot time_period (type SYMBOL))
+    (slot country (type SYMBOL))
 )
 
 (deffacts books
-    (book (title "Pride and Prejudice") (author "Jane Austen") (genre "Romance") (time_period "Regency") (country "England"))
-	(book (title "Pride and Prejudice") (author "Jane Austen") (genre "e") (time_period "e") (country "e"))
-    (book (title "1984") (author "George Orwell") (genre "Dystopian") (time_period "Future") (country "N/A"))
-    (book (title "The Great Gatsby") (author "F. Scott Fitzgerald") (genre "Classic") (time_period "1920s") (country "USA"))
-    (book (title "To Kill a Mockingbird") (author "Harper Lee") (genre "Drama") (time_period "1930s") (country "USA"))
-    (book (title "One Hundred Years of Solitude") (author "Gabriel Garcia Marquez") (genre "Magical Realism") (time_period "20th Century") (country "Colombia"))
+    (book (title "Pride") (author "Jane Austen") (genre Romance) (time_period Regency) (country England))
+	(book (title "Pride and Prejudice") (author "Jane Austen") (genre e) (time_period e) (country e))
+    (book (title "1984") (author "George Orwell") (genre Dystopian) (time_period Future) (country N/A))
+    (book (title "The Great Gatsby") (author "F. Scott Fitzgerald") (genre Classic) (time_period 1920s) (country USA))
+    (book (title "To Kill a Mockingbird") (author "Harper Lee") (genre Drama) (time_period 1930s) (country USA))
+    (book (title "One Hundred Years of Solitude") (author "Gabriel Garcia Marquez") (genre Realism) (time_period 20th) (country Colombia))
 )
 
 (defrule start
@@ -33,7 +33,7 @@
 (defrule ask_time_period
     (not (time_period ?))
     =>
-    (printout t "In what time period would you like to find yourself? (Regency, Future, 1920s, 1930s, 20th Century): ")
+    (printout t "In what time period would you like to find yourself? (Regency, Future, 1920s, 1930s, 20th): ")
     (assert (time_period (read)))
 )
 
@@ -45,17 +45,43 @@
 )
 
 (defrule recommend_books
-
 (genre ?genre)
 (time_period ?time_period)
 (country ?country)
-
-;(book (title ?title) (author ?author) (genre ?genre) (time_period ?time_period) (country ?country))
+(book (title ?title) (author ?author) (genre ?genre) (time_period ?time_period) (country ?country))
 =>
-;(printout t "Title: " ?title crlf)
+(printout t "Title: " ?title crlf)
 (printout t "Author: " ?author crlf)
-(printout t "Genre: " ?genre crlf)
-(printout t "Time Period: " ?time_period crlf)
-(printout t "Country: " ?country crlf)
-;(printout t crlf)
+(printout t crlf)
+(assert (recom_genre nil))
+(assert (recom_time_period nil))
+(assert (recom_country nil))
+)
+(defrule finish
+    (recom_genre nil)
+    (recom_time_period nil)
+    (recom_country nil)
+    =>
+   (printout t "Thank you for using the Book Recommendation System. Enjoy your reading!" crlf)
+   (halt)
+)
+
+(defrule unsupported_input
+    =>
+    (printout t "Sorry, I can't process your request. Please try again." crlf)
+    (assert (recom_genre nil))
+    (assert (recom_time_period nil))
+    (assert (recom_country nil))
+)
+
+(defrule change_input
+    =>
+    (assert (recom_genre nil))
+    (assert (recom_time_period nil))
+    (assert (recom_country nil))
+)
+
+(defrule -input
+    =>
+    (printout t "Incorrect data. Please enter the correct value." crlf)
 )
